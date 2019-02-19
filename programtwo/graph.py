@@ -137,7 +137,7 @@ class Digraph(Graph) :
         Returns the topological sort as a list of vertex indices.
         """
         
-        pass # Remove this pass statement after you implement this method.  Simply here temporarily.
+        # Remove this pass statement after you implement this method.  Simply here temporarily.
 
         #       Homework Hints/Suggestions/Etc:
         #           1) Textbook indicates to use a Linked List.  Python doesn't have
@@ -153,7 +153,8 @@ class Digraph(Graph) :
         #               and then where the finishing time is set, add the vertex index to the front of that list.
         #               And then make sure you return your list of vertices at the end.
         
-
+        sorted = LinkedList()
+        
 
     def transpose(self) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
@@ -247,7 +248,18 @@ class _AdjListIter :
         return data
 
 
-
+class LinkedList(_AdjacencyList):
+    """
+    extending  _AdjacencyList for use as a general linked list
+    """
+    def insert(self,node):
+        if self._first == None :
+            self._first = self._last = _AdjListNode(node)
+        else :
+            new = _AdjListNode(node)
+            new._next = self._first
+            self._first = new            
+            
 
 if __name__ == "__main__" :
     # here is where you will implement any code necessary to confirm that your
