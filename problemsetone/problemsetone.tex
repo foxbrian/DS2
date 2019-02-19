@@ -1,0 +1,37 @@
+\documentclass[12pt]{article}
+
+\author{Brian Fox}
+\title{Problem Set One}
+
+\begin{document}
+\section{3.1-4}
+Is $2^{n+1} = O(2^{n})$? Is $2^{2n} = O(2^{n})$?
+$$\lim_{n\to\infty} \frac{2^{n+1}}{2^{n}} = \lim_{n\to\infty} \frac{2\times2^{n}}{2^{n}} = \lim_{n\to\infty} 2 = 2$$
+Since $\lim_{n\to\infty} \frac{2^{n+1}}{2^{n}}$ evaluates to a constant $2^{n+1}$ is $\Theta(2^{n})$ which means it is also $O(2^{n})$.
+$$\lim_{n\to\infty} \frac{2^{2n}}{2^{n}} = \lim_{n\to\infty} \frac{{2^2}^n}{2^{n}} = \lim_{n\to\infty} 4^{n} = \infty$$
+Since $\lim_{n\to\infty} \frac{2^{2n}}{2^{n}} = \infty$ it is $\omega(2^{n})$ which means it is not $O(2^{n})$
+\section{3.2-3}
+Prove equation $\lg{}(n!) = \Theta(n\lg{n}) $. Also prove that $n! = \omega{}(2^{n})$ and $ $
+\section{3-2}
+\begin{table}[h]
+\begin{tabular}{lll|l|l|l|l|l|}
+& A & B & $O$ & $o$ & $\Omega$ & $\omega$ & $\Theta$ \\ \cline{2-8}
+\textbf{a.} & $\lg^{k}n$ & $n^{\epsilon}$ & yes & yes &  no  &  no    & no  \\ \cline{2-8}
+\textbf{b.} & $n^{k}$ & $c^{n}$ & yes & yes & no & no & no \\ \cline{2-8}
+\textbf{c.} & $\sqrt{n}$ & $n^{\sin{n}}$ &  &  &  &  &  \\ \cline{2-8}
+\textbf{d.} & $2^{n}$ & $2^{n/2}$ & no & no & yes & yes & no \\ \cline{2-8}
+\textbf{e.} & $n^{\lg{c}}$ & $c^{\lg{n}}$ &  &  &  &  &  \\ \cline{2-8}
+\textbf{f.} & $\lg{n!}$ & $\lg{n^n}$ &  &  &  &  &  \\ \cline{2-8} 
+\end{tabular}
+\end{table}
+work:\\
+\textbf{a.} $$ \lim_{n\to\infty} \frac{\lg^{k}n}{n^{\epsilon}} =  \lim_{n\to\infty} \frac{k\lg{}^{k-1}n\times\frac{1}{n\ln{2}}}{\epsilon{}n^{\epsilon-1}} = \lim_{n\to\infty} \frac{k\lg{}^{k-1}n}{\ln(2)\epsilon{}n^{\epsilon}} = \lim_{n\to\infty} \frac{k!}{(\ln(2)\epsilon{})^{}n^{\epsilon}} = 0$$
+\textbf{b.} $$ \lim_{n\to\infty} \frac{n^k}{c^n} = \lim_{n\to\infty} \frac{kn^{k-1}}{c^n\ln{c}} = \lim_{n\to\infty} \frac{k!}{c^n\ln^kc} = 0$$
+\textbf{c.} $$ \lim_{n\to\infty} $$
+\textbf{d.} $$ \lim_{n\to\infty} \frac{2^n}{2^{n/2}} = \lim_{n\to\infty} (\frac{2}{\sqrt{2}})^{n} = \infty$$
+\textbf{e.} $$ \lim_{n\to\infty} $$
+\textbf{f.} $$ \lim_{n\to\infty} $$
+
+\section{17.1-3}
+
+\end{document}
