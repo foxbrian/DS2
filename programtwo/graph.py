@@ -140,22 +140,6 @@ class Digraph(Graph) :
         Returns the topological sort as a list of vertex indices.
         """
         
-        # Remove this pass statement after you implement this method.  Simply here temporarily.
-
-        #       Homework Hints/Suggestions/Etc:
-        #           1) Textbook indicates to use a Linked List.  Python doesn't have
-        #               one in the standard library.  Instead, use a deque (don't simply use
-        #               a python list since adding at the front is O(N) for a python list,
-        #               while it is O(1) for a deque).
-        #           2) From the pseudocode, you will be tempted to (a) call DFS, and then (b) sort
-        #               vertices by the finishing times.  However, don't do that since the sort will
-        #               cost O(V lg V) unnecessarily.
-        #           3) So, how do you do it without sorting?
-        #               Here is one of the ways to do it. Reimplement the DFS directly within topological_sort,
-        #               but initialize an empty list for the result toward the beginning of the method,
-        #               and then where the finishing time is set, add the vertex index to the front of that list.
-        #               And then make sure you return your list of vertices at the end.
-        
         sorted_list = LinkedList()
         visited = set()
         
@@ -179,40 +163,34 @@ class Digraph(Graph) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
         Does not alter the self object.  Returns a new Digraph that is the transpose of self."""
         
-        pass # Remove this pass statement after you implement this method.  Simply here temporarily.
-
-        #    Homework Hint: Make sure you don't change the graph.  Start by constructing a new Digraph
-        #                   object with the same number of vertices.
-        #                   If you want to construct a Digraph with v vertices, you'd do something like:
-        #                   t = Digraph(v)
-        #                   Once you have that, you'd then iterate over the edges of the original graph,
-        #                   and for each add an edge to t but with vertices in opposite order.
-        #     Another hint:  See the print_graph method above for an example of how to iterate over the edges
-        #                   of a graph.  Ignore the print statements in that example (you don't want to print anything here).
-        #                   That example iterates over the edges (v,u).  i.e., if you're in the body of the nested loop,
-        #                   then (v,u) is an edge of the graph you are iterating over.
-
-
-
+        transposed = Digraph(len(self._adj))
+        for v,adj in enumerate(self._adj):
+            for e in adj:
+                transposed.add_edge(e,v)
+        return transposed
 
     def strongly_connected_components(self) :
         """Computes the strongly connected components of a digraph.
         Returns a list of lists, containing one list for each strongly connected component,
         which is simply a list of the vertices in that component."""
         
-        pass # Remove this pass statement after you implement this method.  Simply here temporarily.
+        transposed = self.transpose()
+        visited = set()
+        components = []
 
-        #       Homework Hints/Suggestions/Etc: See algorithm on page 617.
-        #           1) Take a look at algorithm steps 1 and 2 before you do anything.  Notice that Step 1 computes finishing times with DFS,
-        #               and step 3 uses vertices in order of decreasing finishing times.  As in the topological sort, don't actually sort
-        #               by finishing time (to avoid O(V lg v) step).  However, this is easier than in the topological sort as you already
-        #               have a method that will get you what you need.  For step 1 of algorithm you can simply call your topological sort.
-        #               That will give you the vertices in decreasing order by finishing time, which is really the intention of algorithm line 1.
-        #           2) Line 2 is just the transpose and you implemented a method to compute this above.
-        #           3) The DFS in line 3 can be done in a couple ways.  The simplest is NOT to call DFS, but instead to reimplement it here.
-        #               In the outer loop, use the vertex ordering obtained from algorithm line 1 (to implement line 3).
-        #               And to do line 4, you'll need to have your code generate the list of lists for the return value.
-   
+        def scc_visit(v,scc=[]):
+            nonlocal visited
+            visited.add(v)
+            scc.append(v)
+            for e in transposed._adj[v]:
+                if not e in visited:
+                    scc_visit(e,scc)
+            return scc
+
+        for v in self.topological_sort():
+            if not v in visited:
+                components.append(scc_visit(v,[]))
+        return components
 
 
 
@@ -285,18 +263,17 @@ if __name__ == "__main__" :
     # Code in this if block will only run if you run this module, and not if you load this module with
     # an import for use by another module.
     
-    g = Digraph(5,[(0,1),(1,2),(2,3),(3,4),(4,0)])
+    g = Digraph(8,[(0,1),(1,2),(1,4),(1,5),(2,3),(3,2),(3,7),(4,0),(4,5),(5,6),(6,5),(6,7),(7,7)])
     
     g.print_graph()
 
     for v in g.topological_sort():
         print(v,end="  ")
     print()
-
-    g = Digraph(6,[(0,1),(1,2),(2,3),(3,0),(4,5),(5,4)])
-    
-    g.print_graph()
-
-    for v in g.topological_sort():
-        print(v,end="  ")
     print()
+
+    g.transpose().print_graph()
+    print()
+    
+    print(g.strongly_connected_components())
+
