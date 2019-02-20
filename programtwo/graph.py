@@ -1,3 +1,6 @@
+#!/usr/bin/python
+#Brian Fox
+
 from collections import deque
 import math
 
@@ -153,8 +156,24 @@ class Digraph(Graph) :
         #               and then where the finishing time is set, add the vertex index to the front of that list.
         #               And then make sure you return your list of vertices at the end.
         
-        sorted = LinkedList()
+        sorted_list = LinkedList()
+        visited = set()
         
+        def top_visit(adj,v):
+            nonlocal sorted_list
+            nonlocal visited
+            visited.add(adj)
+            for e in adj:
+                if not self._adj[e] in visited:
+                    top_visit(self._adj[e],e)
+
+            sorted_list.insert(v)
+
+        for v, adj in enumerate(self._adj):
+            if not adj in visited:
+                top_visit(adj,v)
+
+        return sorted_list
 
     def transpose(self) :
         """Computes the transpose of a directed graph. (See textbook page 616 for description of transpose).
@@ -249,16 +268,15 @@ class _AdjListIter :
 
 
 class LinkedList(_AdjacencyList):
-    """
-    extending  _AdjacencyList for use as a general linked list
-    """
+    """extending  _AdjacencyList for use as a general linked list"""
     def insert(self,node):
         if self._first == None :
             self._first = self._last = _AdjListNode(node)
         else :
             new = _AdjListNode(node)
             new._next = self._first
-            self._first = new            
+            self._first = new      
+        self._size = self._size + 1
             
 
 if __name__ == "__main__" :
@@ -266,11 +284,19 @@ if __name__ == "__main__" :
     # topological sort, transpose, and strongly connected components methods work correctly.
     # Code in this if block will only run if you run this module, and not if you load this module with
     # an import for use by another module.
-    pass
     
-
-
-
-
+    g = Digraph(5,[(0,1),(1,2),(2,3),(3,4),(4,0)])
     
+    g.print_graph()
 
+    for v in g.topological_sort():
+        print(v,end="  ")
+    print()
+
+    g = Digraph(6,[(0,1),(1,2),(2,3),(3,0),(4,5),(5,4)])
+    
+    g.print_graph()
+
+    for v in g.topological_sort():
+        print(v,end="  ")
+    print()
