@@ -143,19 +143,19 @@ class Digraph(Graph) :
         sorted_list = LinkedList()
         visited = set()
         
-        def top_visit(adj,v):
+        def top_visit(v):
             nonlocal sorted_list
             nonlocal visited
-            visited.add(adj)
-            for e in adj:
-                if not self._adj[e] in visited:
-                    top_visit(self._adj[e],e)
+            visited.add(v)
+            for e in self._adj[v]:
+                if not e in visited:
+                    top_visit(e)
 
             sorted_list.insert(v)
 
-        for v, adj in enumerate(self._adj):
-            if not adj in visited:
-                top_visit(adj,v)
+        for v in range(len(self._adj)):
+            if not v in visited:
+                top_visit(v)
 
         return sorted_list
 
