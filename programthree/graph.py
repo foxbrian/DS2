@@ -4,6 +4,7 @@ import math
 import random
 from disjointsets import DisjointSets
 from pq import PQ
+from timeit import timeit
 
 # Programming Assignment 3
 # (5) After doing steps 1 through 4 below (look for relevant comments), return up here.
@@ -86,8 +87,53 @@ def time_shortest_path_algs() :
     #        For example, if you want to continue the experimentation with larger graphs, you might
     #        try 1024 vertices with 1047552 edges (dense graph), 1024 vertices with 2048 edges (sparse),
     #        and 1024 vertices with 104755 edges (somewhere between dense and sparse).
-    pass
-
+    print("algorithm\tverts\tedges\ttime")
+    
+    g = generate_random_weighted_digraph(16,240,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=500)
+    td = timeit(lambda : g.dijkstra(0),number=500)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(64,4032,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=20)
+    td = timeit(lambda : g.dijkstra(0),number=20)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(256,65280,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=1)
+    td = timeit(lambda : g.dijkstra(0),number=1)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(16,60,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=500)
+    td = timeit(lambda : g.dijkstra(0),number=500)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(64,672,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=100)
+    td = timeit(lambda : g.dijkstra(0),number=100)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(256,8160,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=100)
+    td = timeit(lambda : g.dijkstra(0),number=100)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(16,32,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=100)
+    td = timeit(lambda : g.dijkstra(0),number=100)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(64,128,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=100)
+    td = timeit(lambda : g.dijkstra(0),number=100)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
+    g = generate_random_weighted_digraph(256,512,1,10)
+    tb = timeit(lambda : g.bellman_ford(0),number=100)
+    td = timeit(lambda : g.dijkstra(0),number=100)
+    print("bellman-ford\t16\t240\t"+str(tb))
+    print("dijkstra\t16\t240\t"+str(td))
 
 
 class Graph :
@@ -310,40 +356,31 @@ class Digraph(Graph) :
 
         # Programming Assignment 3:
         # 1) Implement Bellman Ford Algorithm.
-        #
-        #    If there are negative weight cycles, have this method return an empty list (instead of the False from the
-        #    pseudocode).
-        #
-        #    If there are no negative weight cycles, then
-        #    have this method return a list of 3-tuples, one for each vertex, such that first position is vertex id,
-        #    second is distance from source vertex (i.e., what pseudocode from textbook refers to as v.d), and third
-        #    is the vertex's parent (what the textbook refers to as v.pi).  E.g., (2, 10, 5) would mean the shortest path
-        #    from s to 2 has weight 10, and vertex 2's parent is vertex 5.
-        #
-        #    the parameter s is the source vertex.
-        #
-        # Useful Hint (for both parts 1 and 2):
-        #  The loops of lines 3 and 5 of the pseudocode for Bellman Ford iterate over the edges
-        #  of the graph.  You will also need the weights.  The adjacency list class has two iterators,
-        #  one that gives you the weights and one that doesn't.  To implement the iteration over the
-        #  edges, you will actually need a pair of nested loops, one over the vertices u, and then one
-        #  over the edges that start at u (along with the weights of those edges).
-        #  To iterate over the vertices adjacent to u, and the get the weight associated with each edge, you can do:
-        #  for v, w in self._adj[u].__iter__(True)
-        #  You don't normally call methods that start with __ directly.  Python's for loops call
-        #  that method to control how many times to iterate when iterating over a collection like a list.
-        #  I provided an optional parameter to that method, which when passed True, gives you the
-        #  adjacent vertices and the edge weights.
-        #
-        #  When you get to part 2 later, when you implement Dijkstra's algorithm, you will need to do a similar
-        #  thing (line 7 of the pseduocode of Dijkstra's algorithm).  Only there you'll just iterate over the
-        #  vertices adjacent to u, and not all of the edges.
-        #
-        pass
+        
+        #initialize shortest path
+        pointers = [None for i in range(len(self._adj))]
+        costs = [math.inf for i in range(len(self._adj))]
+        pointers[s]=s
+        costs[s]=0
+        #for 1 less than each vertex
+        for i in range(len(self._adj)-1):
+            #for each edge
+            for u,adj_list in enumerate(self._adj):
+                for v in adj_list.__iter__(True):
+                    #relax
+                    if v[1]+costs[u] < costs[v[0]]:
+                        costs[v[0]] = v[1]+costs[u]
+                        pointers[v[0]]=u
+        #for each edge
+        for u,adj_list in enumerate(self._adj):
+            for v in adj_list.__iter__(True):
+                if costs[v[0]] > costs[u]+v[1]:
+                    return []
 
+        return [(i,costs[i],pointers[i]) for i in range(len(self._adj))]
 
-    
-    def dijkstra(self,s) :
+                    
+    def dijkstra(self,s):
         """Dijkstra's Algorithm using a binary heap as the PQ.
 
         Keyword Arguments:
@@ -352,23 +389,31 @@ class Digraph(Graph) :
 
         # Programming Assignment 3:
         # 2) Implement Dijkstra's Algorithm using a binary heap implementation of a PQ as the PQ.
-        #    Specifically, use the implementation I have posted here: https://github.com/cicirello/PythonDataStructuresLibrary
-        #    Use the download link (if you simply click pq.py Github will just show you the source in a web browser with line numbers).
-        #
-        #    Have this method return a list of 3-tuples, one for each vertex, such that first position is vertex id,
-        #    second is distance from source vertex (i.e., what pseudocode from textbook refers to as v.d), and third
-        #    is the vertex's parent (what the textbook refers to as v.pi).  E.g., (2, 10, 5) would mean the shortest path
-        #    from s to 2 has weight 10, and vertex 2's parent is vertex 5.
-        #
-        #    the parameter s is the source vertex.
-        pass
-
-    
-     
-
         
+        pointers = [None for i in range(len(self._adj))]
+        costs = [math.inf for i in range(len(self._adj))]
+        pointers[s]=s
+        costs[s]=0
 
+        S = set()
+        Q = PQ()
+        
+        #Q = G.V
+        for i in range(len(self._adj)):
+            Q.add(i,costs[i])
 
+        while(not Q.is_empty()):
+            u = Q.extract_min()
+            S = S | {u}
+            for v in self._adj[u].__iter__(True):
+                #relax
+                if v[1]+costs[u] < costs[v[0]]:
+                    costs[v[0]] = v[1]+costs[u]
+                    pointers[v[0]]=u
+                    Q.change_priority(v[0],costs[v[0]])
+
+        return [(i,costs[i],pointers[i]) for i in range(len(self._adj))]
+        
 class _AdjacencyList :
 
     __slots__ = [ '_first', '_last', '_size']
@@ -455,13 +500,11 @@ if __name__ == "__main__" :
     # Code in this if block will only run if you run this module, and not if you load this module with
     # an import for use by another module.
 
+    #g = generate_random_weighted_digraph(5,11,0,5)
+    #g.print_graph()
+    #print(g.bellman_ford(0))
+    #print(g.dijkstra(0))
+    
     # (4) Call your time_shortest_path_algs() function here to output the results of step 3.
 
-    pass
-    
-
-
-
-
-    
-
+    time_shortest_path_algs()
