@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#Brian Fox
+
 from collections import deque
 import math
 import random
@@ -12,6 +14,9 @@ from timeit import timeit
 #     Does graph density affect performance?  Does size of the graph otherwise affect performance?
 #     Is Dijkstra always faster than Bellman-Ford?  If not, when is Bellman-Ford faster?
 
+# Dijkstra's algorithm is always faster than Bellman-Ford's algorithm
+# as the graph gets more vertices the difference between the two algorithms becomes more drastic
+# Graph density does effect the performance of both algorithms
 
 
 def generate_random_weighted_digraph(v,e,min_w,max_w) :
@@ -87,54 +92,48 @@ def time_shortest_path_algs() :
     #        For example, if you want to continue the experimentation with larger graphs, you might
     #        try 1024 vertices with 1047552 edges (dense graph), 1024 vertices with 2048 edges (sparse),
     #        and 1024 vertices with 104755 edges (somewhere between dense and sparse).
-    print("algorithm\tverts\tedges\ttime")
+    print("vertices,edges,bellman-ford time,dijkstra time")
     
     g = generate_random_weighted_digraph(16,240,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=500)
     td = timeit(lambda : g.dijkstra(0),number=500)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("16,240,"+str(tb)+","+str(td))
+
     g = generate_random_weighted_digraph(64,4032,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=20)
     td = timeit(lambda : g.dijkstra(0),number=20)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("64,4032,"+str(tb)+"," + str(td))
+
     g = generate_random_weighted_digraph(256,65280,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=1)
     td = timeit(lambda : g.dijkstra(0),number=1)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("256,65280,"+str(tb)+","+str(td))
+    
     g = generate_random_weighted_digraph(16,60,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=500)
     td = timeit(lambda : g.dijkstra(0),number=500)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("16,60,"+str(tb)+","+str(td))
     g = generate_random_weighted_digraph(64,672,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=100)
     td = timeit(lambda : g.dijkstra(0),number=100)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("64,672,"+str(tb)+","+str(td))
     g = generate_random_weighted_digraph(256,8160,1,10)
-    tb = timeit(lambda : g.bellman_ford(0),number=100)
-    td = timeit(lambda : g.dijkstra(0),number=100)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    tb = timeit(lambda : g.bellman_ford(0),number=20)
+    td = timeit(lambda : g.dijkstra(0),number=20)
+    print("256,8160,"+str(tb)+","+str(td))
     g = generate_random_weighted_digraph(16,32,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=100)
     td = timeit(lambda : g.dijkstra(0),number=100)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("16,32,"+str(tb)+","+str(td))
     g = generate_random_weighted_digraph(64,128,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=100)
     td = timeit(lambda : g.dijkstra(0),number=100)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
+    print("64,128,"+str(tb)+","+str(td))
     g = generate_random_weighted_digraph(256,512,1,10)
     tb = timeit(lambda : g.bellman_ford(0),number=100)
     td = timeit(lambda : g.dijkstra(0),number=100)
-    print("bellman-ford\t16\t240\t"+str(tb))
-    print("dijkstra\t16\t240\t"+str(td))
-
+    print("256,512,"+str(tb)+","+str(td))
+    
 
 class Graph :
     """Graph represented with adjacency lists."""
