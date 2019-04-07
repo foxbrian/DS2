@@ -1,7 +1,7 @@
-
+#!/usr/bin/python
 # Add any relevant import statements up here.
-
-
+import math
+import sys
 # Programming Assignment 4:
 # Follow the instuctions in comments throughout this file.
 # Don't rename any methods, attributes, functions, etc.
@@ -37,8 +37,12 @@ class WeightedAdjacencyMatrix :
         Keyword arguments:
         size -- Number of nodes of the graph.
         """
-
-        pass
+        
+        self._W = list()
+        for i in range(size):
+            self._W.append(list())
+            for j in range(size):
+                self._W[i].append(0 if i == j else math.inf)
     
 
     # 2) Implement this method (see the provided docstring)
@@ -51,7 +55,7 @@ class WeightedAdjacencyMatrix :
         weight -- edge weight
         """
 
-        pass
+        self._W[u][v] = weight
     
 
     # 5) Implement this method (see the provided docstring)
@@ -65,8 +69,24 @@ class WeightedAdjacencyMatrix :
         weights of the shortest paths between all pairs of vertices, and P is the predecessors matrix.
         """
 
-        return None
-    
+        D = self._W
+        P = [[i if e!=math.inf else math.inf for i,e in enumerate(v)] for v in D]
+        for k in range(len(self._W)):
+            D_next = list()
+            P_next = list()
+            for i in range(len(self._W)):
+                D_next.append(list())
+                P_next.append(list())
+                for j in range(len(self._W)):
+                    if(D[i][k]+D[k][j] < D[i][j]):
+                        D_next[i].append(D[i][k]+D[k][j])
+                        P_next[i].append(k)
+                    else:
+                        D_next[i].append(D[i][j])
+                        P_next[i].append(P[i][j])
+            P = P_next
+            D = D_next
+        return (D,P)
 
 
 # 3) Implement this function.  First note the lack of indentation.  This is not a method of the above class.
@@ -90,9 +110,17 @@ def haversine_distance(lat1, lng1, lat2, lng2) :
 
     Returns haversine distance in meters.
     """
+    R = 6371000
+    lat1 = math.radians(lat1)
+    lat2 = math.radians(lat2)
+    lng1 = math.radians(lng1)
+    lng2 = math.radians(lng2)
+    d_lat = lat2-lat1
+    d_lng = lng2-lng1
 
-    return None
-
+    a = math.sin(d_lat/2)**2 + math.cos(lat1)*math.cos(lat2)*math.sin(d_lng/2)**2
+    c = 2*math.atan2(math.sqrt(a),math.sqrt(1-a))
+    return R*c
 
 # 4) Implement this function.  First note the lack of indentation.  This is not a method of the above class.
 # It is a function.
@@ -142,8 +170,34 @@ def parse_highway_graph_data(filename) :
 
     Returns a WeightedAdjacencyMatrix object.
     """
+    tmg = open(filename)
+    tmg.readline()
+    V,E = tmg.readline().split()
+    V = int(V)
+    E = int(E)
 
-    return None
+    #save the lat and lng of each vertex in order 
+    vertex_values = list()
+    for i in range(V):
+        vert_id, lat, lng = tmg.readline().split()
+        vertex_values.append((float(lat),float(lng)))
+    
+    # construct graph and add each edge in the file
+    G = WeightedAdjacencyMatrix(V)
+    for i in range(E):
+        from_v,to_v,vert_id = tmg.readline().split()
+        from_v = int(from_v)
+        to_v = int(to_v)
+        dist = haversine_distance(vertex_values[from_v][0],
+            vertex_values[from_v][1],
+            vertex_values[to_v][0],
+            vertex_values[to_v][1])
+
+        #add edges going both ways 
+        G.add_edge(from_v,to_v,dist)
+        G.add_edge(to_v,from_v,dist)
+    tmg.close()
+    return G
 
 
 # 6a) This function should construct a WeightedAdjacencyMatrix object with the vertices and edges of your choice
@@ -153,8 +207,23 @@ def parse_highway_graph_data(filename) :
 # If you also computed the predecessor matrix, then output that as well (print a blank line between the matrices).
 def test_with_your_own_graphs() :
 
-    pass
+    G = WeightedAdjacencyMatrix(4)
+    G.add_edge(0,1,2)
+    G.add_edge(1,3,2)
+    G.add_edge(0,3,2)
+    G.add_edge(2,3,2)
+    G.add_edge(3,0,-1)
+    D = G.floyd_warshall()
 
+    for line in D[0]:
+        for item in line:
+            print(item,end="\t")
+        print()
+    print()
+    for line in D[1]:
+        for item in line:
+            print(item,end="\t")
+        print()
 
 # 6b) This function should use your parseHighwayGraphData to get a WeightedAdjacencyMatrix object corresponding
 # to the graph of your choice from http://tm.teresco.org/graphs/ (I recommend starting with one of the small graphs).
@@ -170,4 +239,35 @@ def test_with_your_own_graphs() :
 # graph that you used).
 def test_with_highway_graph(L) :
 
-    pass
+    def path(P,from_v,to_v):
+        by_v = P[from_v][to_v]
+        if(by_v == to_v):
+            print(to_v)
+        else:
+            print(by_v,end=" > ")
+            path(P,by_v,to_v)
+
+    if __name__=="__main__":
+        G = parse_highway_graph_data(sys.argv[1])
+    else:
+        G = parse_highway_graph_data("AND-region-simple.tmg")
+
+    D,P = G.floyd_warshall()
+    for points in L:
+        print(points)
+        print(D[points[0]][points[1]],end="\t")
+        print("Path: "+str(points[0]),end=" > ")
+        path(P,points[0],points[1])
+
+
+    print()
+
+
+if __name__=="__main__":
+
+    #arguments passed in the form :
+    #   p4.py "relative/path/to/tmg" "from,to" "from,to" ... 
+    L = list()
+    for points in sys.argv[2:]:
+        L.append([int(x) for x in points.split(",")])
+    test_with_highway_graph(L)
