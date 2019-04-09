@@ -263,17 +263,19 @@ if __name__ == "__main__" :
     # Code in this if block will only run if you run this module, and not if you load this module with
     # an import for use by another module.
     
-    g = Digraph(8,[(0,1),(1,2),(1,4),(1,5),(2,3),(3,2),(3,7),(4,0),(4,5),(5,6),(6,5),(6,7),(7,7)])
-    
+    #g = Digraph(8,[(0,1),(1,2),(1,4),(1,5),(2,3),(3,2),(3,7),(4,0),(4,5),(5,6),(6,5),(6,7),(7,7)])
+    #print("initial graph as seen on p. 616:")
+    g=Digraph(6, [(1, 2), (1, 5), (2, 1), (2, 5), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 5), (4, 3), (5, 4), (5, 1), (5, 2)])
     g.print_graph()
-
+    
+    print("\ntopological sort:")
     for v in g.topological_sort():
         print(v,end="  ")
-    print()
-    print()
+    
+    print("\n\ntranspose:")
 
     g.transpose().print_graph()
-    print()
+    print("\nstrongly connected components:")
     
     print(g.strongly_connected_components())
 

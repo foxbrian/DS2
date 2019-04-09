@@ -1,4 +1,9 @@
 #!/usr/bin/python
+
+#############
+# Brian Fox #
+#############
+
 # Add any relevant import statements up here.
 import math
 import sys
@@ -246,8 +251,7 @@ def test_with_highway_graph(L) :
         else:
             print(by_v,end=" > ")
             path(P,by_v,to_v)
-
-    if __name__=="__main__":
+    if len(sys.argv)>1:
         G = parse_highway_graph_data(sys.argv[1])
     else:
         G = parse_highway_graph_data("AND-region-simple.tmg")
@@ -255,7 +259,7 @@ def test_with_highway_graph(L) :
     D,P = G.floyd_warshall()
     for points in L:
         print(points)
-        print(D[points[0]][points[1]],end="\t")
+        print("Distance: %.2f meters" % D[points[0]][points[1]],end="\t")
         print("Path: "+str(points[0]),end=" > ")
         path(P,points[0],points[1])
 
@@ -268,6 +272,9 @@ if __name__=="__main__":
     #arguments passed in the form :
     #   p4.py "relative/path/to/tmg" "from,to" "from,to" ... 
     L = list()
-    for points in sys.argv[2:]:
-        L.append([int(x) for x in points.split(",")])
+    if len(sys.argv)>1:
+        for points in sys.argv[2:]:
+            L.append([int(x) for x in points.split(",")])
+    else:
+        L = [(0,3),(0,30),(3,30)]
     test_with_highway_graph(L)
