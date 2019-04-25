@@ -31,16 +31,27 @@
 #       15	    7	        1.5100E-05  5.5073E-01
 #       2500	    1500	2.5762E-02  4.3276E-01
 #       500000	    100000	8.9243E+02  3.0510E+01
+#       15	    15	        1.0300E-05  2.0743E-01
+#       2500	    2500	9.9700E-05  5.0982E-01
+#       500000	    500000	1.3139E-02  5.0956E-01
 #
 #    Q2: How do the times (of both versions) vary by string length?  If T is held constant, and pattern P length varied, how does
 #        that affect runtime?  If P length is held constant, and text T length varied, how does that affect runtimes?
 #
+#       sequential increases linearly while parallel increases very slowly
+#
 #    Q3: At what lengths of P and/or T is the sequential version faster?
+#
+#       For short lengths of T the cost of starting the process pool outweighs the time saved by parallel processing. For lengths of P close to T or close to 0 the sequential matcher is faster regardless of the length of T
 #
 #    Q4: At what lengths of P and/or T is the parallel version faster?
 #
+#       The parallel version is better for any situation where the first character of P appears many times in T
+#
 #    Q5: Are the results consistent with the speedup you computed in Problem Set 4?  If not, what do you think caused
 #        the inconsistency with the theoretical speedup?
+#
+#       I'm not sure how to answer this since I tested with different values of T and P but not with different process pool sizes
 
 
 # These are imports you will likely need.  Feel free to add any other imports that are necessary.
