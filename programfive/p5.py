@@ -35,8 +35,9 @@
 
 
 # These are imports you will likely need.  Feel free to add any other imports that are necessary.
-from multiprocessing import Process, Pool, Array, Value
-
+from multiprocessing import Pool
+from timeit import timeit
+from functools import partial
 
 def time_results() :
     """Write any code needed to compare the timing of the sequential and parallel versions
@@ -44,13 +45,36 @@ def time_results() :
 
     T-length   P-Length   SequentialTime  ParallelTime
     """
+    seqtime = timeit(lambda : naive_string_matcher("abc"*5,"abc"),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abc"*5,"abc"),number=1)
+    print("15","3","%.4E"%seqtime,"%.4E"%partime,sep="\t")
 
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*500,"abc"),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcde"*500,"abc"),number=1)
+    print("2500","3","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcdefghij"*50000,"abc"),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcdefghij"*50000,"abc"),number=1)
+    print("500000","3","%.4E"%seqtime,"%.4E"%partime,sep="\t")
     
-    pass
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*3,"abcde"),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abc"*3,"abcde"),number=1)
+    print("15","5","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*500,"abcde"*100),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcde"*500,"abcde"*100),number=1)
+    print("2500","500","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcdefghij"*50000,"abcdefghij"*100),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcdefghij"*50000,"abcdefghij"*100),number=1)
+    print("500000","1000","%.4E" % seqtime,"%.4E"%partime,sep="\t")
 
 def print_results(L) :
     """Prints the list of indices for the matches."""
-    pass
+    for i in L:
+        print(i,end="  ")
+    print()
+
 
 def naive_string_matcher(T, P) :
     """Naive string matcher algorithm from textbook page 988.
@@ -77,9 +101,7 @@ def naive_string_matcher(T, P) :
     return out
     
 def _index_matches(T,P,i):
-    print(T[i:i+len(P)])
     if list(T[i:i+len(P)]) == list(P):
-        print("if complete")
         return i
 
 def p_naive_string_matcher(T, P, p=4) :
@@ -123,14 +145,14 @@ def p_naive_string_matcher(T, P, p=4) :
     P -- the pattern string.
     """
     results = list()
+    hits= list()
+    map_func = partial(_index_matches,T,P)
     with Pool(processes=p) as pool:
         for i in range(len(T)-len(P)+1):
             if T[i] == P[0]:
-                results.append(pool.apply_async(_index_matches,args=(T,P,i)))
+                hits.append(i)
 
-        output=list()
-        for p in results:
-            x = p.get()
-            output.append(x)
+        results = pool.map_async(map_func,hits).get()
+
     
-    return output
+    return results
