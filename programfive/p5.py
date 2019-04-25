@@ -21,7 +21,16 @@
 #
 #    Q1: After running time_results, fill in this table in this comment for whatever P and T lengths
 #        you tried (make sure you vary lengths from short to longer:
-#        T-length   P-Length   Sequential   Parallel
+#       T-length    P-Length    Sequential  Parallel
+#       15          3	        1.7500E-05  5.6339E-01
+#       2500	    3	        1.7633E-03  4.2950E-01
+#       500000	    3	        3.6300E-01  5.3324E-01
+#       15	    5	        1.6700E-05  5.3031E-01
+#       2500	    500	        1.9680E-02  5.3363E-01
+#       500000	    1000	8.4272E+00  9.4017E-01
+#       15	    7	        1.5100E-05  5.5073E-01
+#       2500	    1500	2.5762E-02  4.3276E-01
+#       500000	    100000	8.9243E+02  3.0510E+01
 #
 #    Q2: How do the times (of both versions) vary by string length?  If T is held constant, and pattern P length varied, how does
 #        that affect runtime?  If P length is held constant, and text T length varied, how does that affect runtimes?
@@ -68,6 +77,31 @@ def time_results() :
     seqtime = timeit(lambda : naive_string_matcher("abcdefghij"*50000,"abcdefghij"*100),number=1)
     partime = timeit(lambda : p_naive_string_matcher("abcdefghij"*50000,"abcdefghij"*100),number=1)
     print("500000","1000","%.4E" % seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*3,"abcdeab"),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abc"*3,"abcdeab"),number=1)
+    print("15","7","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*500,"abcde"*300),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcde"*500,"abcde"*300),number=1)
+    print("2500","1500","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcdefghij"*50000,"abcdefghij"*10000),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcdefghij"*50000,"abcdefghij"*10000),number=1)
+    print("500000","100000","%.4E" % seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*3,"abcdeab"*3),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abc"*3,"abcdeab"*3),number=1)
+    print("15","15","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcde"*500,"abcde"*500),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcde"*500,"abcde"*500),number=1)
+    print("2500","2500","%.4E"%seqtime,"%.4E"%partime,sep="\t")
+
+    seqtime = timeit(lambda : naive_string_matcher("abcdefghij"*50000,"abcdefghij"*50000),number=1)
+    partime = timeit(lambda : p_naive_string_matcher("abcdefghij"*50000,"abcdefghij"*50000),number=1)
+    print("500000","500000","%.4E" % seqtime,"%.4E"%partime,sep="\t")
+
 
 def print_results(L) :
     """Prints the list of indices for the matches."""
